@@ -99,7 +99,7 @@ def readSingleSpectrumFromInspectrum(root):
         
     return np.array(f), np.array(Z)
 
-def readInspectrum(filename, spectrumNumber=5):
+def readInspectrum(filename, spectrumNumber=0):
     """
     function for reading the .irf file from inspectrum or examight
     
