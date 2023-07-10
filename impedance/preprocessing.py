@@ -60,7 +60,8 @@ def readFile(filename, instrument=None):
 
 def readSingleSpectrumFromInspectrum(root):
     """
-    function for reading the .irf file from inspectrum or examight
+    function for reading a single impedance spectrum of the .irf file
+    from inspectrum or examight
     
     Parameters
     ----------
@@ -99,14 +100,18 @@ def readSingleSpectrumFromInspectrum(root):
         
     return np.array(f), np.array(Z)
 
-def readInspectrum(filename, spectrumNumber=0):
+def readInspectrum(filename, spectrumIndex=0):
     """
-    function for reading the .irf file from inspectrum or examight
+    function for reading a single impedance spectrum of a collection of 
+     spectra from the .irf file from inspectrum or examight
     
     Parameters
     ----------
     filename: string
         Filename of .irf file to extract impedance data from
+    spectrumNumber: int
+        represents the index of the impedance spectrum to be fetched from 
+        the XML tree
         
     Returns
     -------
@@ -126,11 +131,11 @@ def readInspectrum(filename, spectrumNumber=0):
         return readSingleSpectrumFromInspectrum(root)
     elif root.tag == "inspectrumSuiteMeasurementResultCollection":
         measurements_count = int(root.attrib["measurementResultCount"])
-        if spectrumNumber >= measurements_count:
+        if spectrumIndex >= measurements_count:
             raise IndexError(
                 "The number chosen for the spectrum is out of range"
             )
-        return readSingleSpectrumFromInspectrum(root[spectrumNumber])
+        return readSingleSpectrumFromInspectrum(root[spectrumIndex])
 
 def readGamry(filename):
     """ function for reading the .DTA file from Gamry
