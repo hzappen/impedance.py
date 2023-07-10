@@ -3,7 +3,7 @@ Methods for preprocessing impedance data from instrument files
 """
 
 import numpy as np
-
+import xml.etree.ElementTree as ET
 
 def readFile(filename, instrument=None):
     """ A wrapper for reading in many common types of impedance files
@@ -25,7 +25,8 @@ def readFile(filename, instrument=None):
     """
 
     supported_types = ['gamry', 'autolab', 'parstat', 'zplot', 'versastudio',
-                       'powersuite', 'biologic', 'chinstruments']
+                       'powersuite', 'biologic', 'chinstruments',
+                       'inspectrum', 'examight']
 
     if instrument is not None:
         assert instrument in supported_types,\
@@ -48,11 +49,88 @@ def readFile(filename, instrument=None):
         f, Z = readPowerSuite(filename)
     elif instrument == 'chinstruments':
         f, Z = readCHInstruments(filename)
+    elif instrument == "inspectrum":
+        f, Z = readInspectrum(filename)
+    elif instrument == "examight":
+        f, Z = readInspectrum(filename)
     elif instrument is None:
         f, Z = readCSV(filename)
 
     return f, Z
 
+def readSingleSpectrumFromInspectrum(root):
+    """
+    function for reading the .irf file from inspectrum or examight
+    
+    Parameters
+    ----------
+    filename: string
+        Filename of .irf file to extract impedance data from
+        
+    Returns
+    -------
+    frequencies : np.ndarray
+        Array of frequencies
+    impedance : np.ndarray of complex numbers
+        Array of complex impedances
+    
+    """
+    try:
+        measurement_results = root.find("measurementResults")
+        impedance_spectrum = measurement_results.find("impedanceSpectrum")
+    except:
+        return None, None
+    
+    f, Z = [], []
+    for spectrumData in impedance_spectrum:
+        if (
+            "freq" in spectrumData.attrib.keys()
+            and "zRe" in spectrumData.attrib.keys()
+            and "zIm" in spectrumData.attrib.keys()
+        ):
+            try:
+                f.append(float(spectrumData.attrib["freq"]))
+                Z.append(
+                    float(spectrumData.attrib["zRe"]) +
+                    1j*float(spectrumData.attrib["zIm"])
+                )
+            except:
+                return None, None
+        
+    return np.array(f), np.array(Z)
+
+def readInspectrum(filename, spectrumNumber=5):
+    """
+    function for reading the .irf file from inspectrum or examight
+    
+    Parameters
+    ----------
+    filename: string
+        Filename of .irf file to extract impedance data from
+        
+    Returns
+    -------
+    frequencies : np.ndarray
+        Array of frequencies
+    impedance : np.ndarray of complex numbers
+        Array of complex impedances
+    
+    """
+    try:
+        tree = ET.parse(filename)
+        root = tree.getroot()
+    except:
+        return None, None
+    
+    if root.tag == "inspectrumSuiteMeasurementResults":
+        return readSingleSpectrumFromInspectrum(root)
+    elif root.tag == "inspectrumSuiteMeasurementResultCollection":
+        measurements_count = int(root.attrib["measurementResultCount"])
+        if spectrumNumber >= measurements_count:
+            raise IndexError(
+                "The number chosen for the spectrum is out of range"
+            )
+        return readSingleSpectrumFromInspectrum(root[spectrumNumber])
 
 def readGamry(filename):
     """ function for reading the .DTA file from Gamry
