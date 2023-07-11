@@ -1,6 +1,7 @@
 from impedance.preprocessing import readFile, readGamry, readZPlot,\
                                     readBioLogic, ignoreBelowX, \
-                                    cropFrequencies, readCSV, saveCSV
+                                    cropFrequencies, readCSV, saveCSV, \
+                                    readInspectrum
 import numpy as np
 import os
 import pytest
@@ -409,6 +410,31 @@ Z_Autolab = \
               -0.00315992, -0.00291614, -0.00296706, -0.00316768, -0.00342931,
               -0.00390293]) * 1j
 
+f_Inspectrum = np.array([
+    1, 2, 3, 4, 5, 6, 9, 11, 15, 20, 27, 36, 48, 65, 87, 117, 157, 211, 283,
+    381, 513, 690, 929, 1000, 1250, 1682, 2264, 3047, 4102, 5330, 7600, 10000
+])
+
+Z_Inspectrum_real = np.array([
+    0.0249551, 0.0242835, 0.023575, 0.0230584, 0.0224896, 0.0219716, 0.0207191,
+    0.0201516, 0.0193051, 0.0186375, 0.0180542, 0.0175697, 0.0171292, 0.01669,
+    0.0162683, 0.0158478, 0.0154349, 0.0150256, 0.0146125, 0.0142056,
+    0.0138062, 0.0134312, 0.0130814, 0.0130001, 0.0127585, 0.0124762,
+    0.0122315, 0.0120331, 0.0118863, 0.0118144, 0.0118265, 0.0119509
+])
+
+Z_Inspectrum_imag = np.array([
+    -0.00204645, -0.00244181, -0.00286969, -0.00320339, -0.00342533,
+    -0.00355242, -0.00364815, -0.00358879, -0.00340874, -0.00318209,
+    -0.00294614, -0.00272946, -0.00256232, -0.00242305, -0.00231126,
+    -0.00221032, -0.0020997, -0.0019874, -0.00185046, -0.00167729,
+    -0.00145793, -0.00117949, -0.000829288, -0.000726035, -0.000388289,
+    0.000162208, 0.000856943, 0.00174094, 0.00287826, 0.00414997, 0.00642531,
+    0.00877068
+])
+
+Z_Inspectrum = Z_Inspectrum_real + 1j * Z_Inspectrum_imag
+
 example_files = {'gamry': 'exampleDataGamry.DTA',
                  'gamry_abort': 'exampleDataGamryABORT.DTA',
                  'autolab': 'exampleDataAutolab.txt',
@@ -418,6 +444,8 @@ example_files = {'gamry': 'exampleDataGamry.DTA',
                  'powersuite': 'exampleDataPowersuite.txt',
                  'biologic': 'exampleDataBioLogic.mpt',
                  'chinstruments': 'exampleDataCHInstruments.txt',
+                 'inspectrum': 'inspectrum_result_example_single.irf',
+                 'examight': 'inspectrum_result_example_single.irf',
                  None: 'exampleData.csv'}
 
 f_checks = {'gamry': f_gamry,
@@ -428,6 +456,8 @@ f_checks = {'gamry': f_gamry,
             'powersuite': f_powersuite,
             'biologic': f_BioLogic,
             'chinstruments': f_CHInstruments,
+            'inspectrum': f_Inspectrum,
+            'examight': f_Inspectrum,
             None: frequencies}
 
 Z_checks = {'gamry': Z_gamry,
@@ -438,6 +468,8 @@ Z_checks = {'gamry': Z_gamry,
             'powersuite': Z_powersuite,
             'biologic': Z_BioLogic,
             'chinstruments': Z_CHInst,
+            'inspectrum': Z_Inspectrum,
+            'examight': Z_Inspectrum,
             None: Z_correct}
 
 directory = "data"
@@ -451,6 +483,9 @@ def test_readFile():
                 and (np.allclose(Z, Z_checks[inst]))
     # assert (f == frequencies).all() and (Z == Z_correct).all()
 
+def test_readInspectrum_single_spectrum():
+    f, Z = readInspectrum(os.path.join(directory, example_files['inspectrum']))
+    assert (f == f_Inspectrum).all() and (Z == Z_Inspectrum).all()
 
 def test_readGamry():
     f, Z = readGamry(os.path.join(directory, example_files['gamry']))

@@ -109,7 +109,7 @@ def readInspectrum(filename, spectrumIndex=0):
     ----------
     filename: string
         Filename of .irf file to extract impedance data from
-    spectrumNumber: int
+    spectrumIndex: int
         represents the index of the impedance spectrum to be fetched from 
         the XML tree
         
@@ -133,7 +133,7 @@ def readInspectrum(filename, spectrumIndex=0):
         measurements_count = int(root.attrib["measurementResultCount"])
         if spectrumIndex >= measurements_count:
             raise IndexError(
-                "The number chosen for the spectrum is out of range"
+                "The index chosen for the spectrum is out of range"
             )
         return readSingleSpectrumFromInspectrum(root[spectrumIndex])
 
