@@ -435,6 +435,27 @@ Z_Inspectrum_imag = np.array([
 
 Z_Inspectrum = Z_Inspectrum_real + 1j * Z_Inspectrum_imag
 
+Z_Inspectrum_collection_real = np.array([
+    0.0249551, 0.0242835, 0.023575, 0.0230584, 0.0224896, 0.0219716,
+    0.0207191, 0.0201516, 0.0193051, 0.0186375, 0.0180542, 0.0175697,
+    0.0171292, 0.01669, 0.0162683, 0.0158478, 0.0154349, 0.0150256, 0.0146125,
+    0.0142056, 0.0138062, 0.0134312, 0.0130814, 0.0130001, 0.0127585,
+    0.0124762, 0.0122315, 0.0120331, 0.0118863, 0.0118144, 0.0118265, 0.0119509
+])
+
+Z_Inspectrum_collection_imag = np.array([
+    -0.00204645, -0.00244181, -0.00286969, -0.00320339, -0.00342533, 
+    -0.00355242, -0.00364815, -0.00358879, -0.00340874, -0.00318209,
+    -0.00294614, -0.00272946, -0.00256232, -0.00242305, -0.00231126,
+    -0.00221032, -0.0020997, -0.0019874, -0.00185046, -0.00167729,
+    -0.00145793, -0.00117949, -0.000829288, -0.000726035, -0.000388289,
+    0.000162208, 0.000856943, 0.00174094, 0.00287826, 0.00414997, 0.00642531,
+    0.00877068
+])
+
+Z_Inspectrum_collection = Z_Inspectrum_collection_real + \
+    1j * Z_Inspectrum_collection_imag
+
 example_files = {'gamry': 'exampleDataGamry.DTA',
                  'gamry_abort': 'exampleDataGamryABORT.DTA',
                  'autolab': 'exampleDataAutolab.txt',
@@ -445,6 +466,8 @@ example_files = {'gamry': 'exampleDataGamry.DTA',
                  'biologic': 'exampleDataBioLogic.mpt',
                  'chinstruments': 'exampleDataCHInstruments.txt',
                  'inspectrum': 'exampleDataInspectrumSingleResult.irf',
+                 'inspectrum_collection': \
+                     'exampleDataInspectrumResultCollection.irf',
                  None: 'exampleData.csv'}
 
 f_checks = {'gamry': f_gamry,
@@ -456,6 +479,7 @@ f_checks = {'gamry': f_gamry,
             'biologic': f_BioLogic,
             'chinstruments': f_CHInstruments,
             'inspectrum': f_Inspectrum,
+            'inspectrum_collection': f_Inspectrum,
             None: frequencies}
 
 Z_checks = {'gamry': Z_gamry,
@@ -467,6 +491,7 @@ Z_checks = {'gamry': Z_gamry,
             'biologic': Z_BioLogic,
             'chinstruments': Z_CHInst,
             'inspectrum': Z_Inspectrum,
+            'inspectrum_collection': Z_Inspectrum_collection,
             None: Z_correct}
 
 directory = "data"
@@ -484,6 +509,14 @@ def test_readFile():
 def test_readInspectrum_single_spectrum():
     f, Z = readInspectrum(os.path.join(directory, example_files['inspectrum']))
     assert (f == f_Inspectrum).all() and (Z == Z_Inspectrum).all()
+    
+def test_readInspectrum_collection_of_spectra():
+    f, Z = readInspectrum(
+        os.path.join(directory, example_files['inspectrum_collection'])
+    )
+    assert (f == f_Inspectrum).all()
+    assert (Z == Z_Inspectrum_collection).all()
+    
 
 
 def test_readGamry():
