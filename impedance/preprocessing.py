@@ -25,8 +25,7 @@ def readFile(filename, instrument=None):
     """
 
     supported_types = ['gamry', 'autolab', 'parstat', 'zplot', 'versastudio',
-                       'powersuite', 'biologic', 'chinstruments',
-                       'inspectrum', 'examight']
+                       'powersuite', 'biologic', 'chinstruments', 'inspectrum']
 
     if instrument is not None:
         assert instrument in supported_types,\
@@ -51,8 +50,6 @@ def readFile(filename, instrument=None):
         f, Z = readCHInstruments(filename)
     elif instrument == "inspectrum":
         f, Z = readInspectrum(filename)
-    elif instrument == "examight":
-        f, Z = readInspectrum(filename)
     elif instrument is None:
         f, Z = readCSV(filename)
 
@@ -60,8 +57,8 @@ def readFile(filename, instrument=None):
 
 def readSingleSpectrumFromInspectrum(root):
     """
-    function for reading a single impedance spectrum of the .irf file
-    from inspectrum or examight
+    function for reading a single impedance spectrum from the .irf file
+    of a SAFION Inspectrum  device
     
     Parameters
     ----------
@@ -102,8 +99,8 @@ def readSingleSpectrumFromInspectrum(root):
 
 def readInspectrum(filename, spectrumIndex=0):
     """
-    function for reading a single impedance spectrum of a collection of 
-     spectra from the .irf file from inspectrum or examight
+    function for reading a single impedance spectrum from a collection of
+    spectra from the .irf file of a SAFION Inspectrum device
     
     Parameters
     ----------
