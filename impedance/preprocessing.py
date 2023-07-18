@@ -55,6 +55,7 @@ def readFile(filename, instrument=None):
 
     return f, Z
 
+
 def readSingleSpectrumFromInspectrum(root):
     """
     function for reading a single impedance spectrum from the .irf file
@@ -97,6 +98,7 @@ def readSingleSpectrumFromInspectrum(root):
         
     return np.array(f), np.array(Z)
 
+
 def readInspectrum(filename, spectrumIndex=0):
     """
     function for reading a single impedance spectrum from a collection of
@@ -133,6 +135,7 @@ def readInspectrum(filename, spectrumIndex=0):
                 "The index chosen for the spectrum is out of range"
             )
         return readSingleSpectrumFromInspectrum(root[spectrumIndex])
+
 
 def readGamry(filename):
     """ function for reading the .DTA file from Gamry

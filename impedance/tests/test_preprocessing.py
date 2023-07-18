@@ -444,8 +444,7 @@ example_files = {'gamry': 'exampleDataGamry.DTA',
                  'powersuite': 'exampleDataPowersuite.txt',
                  'biologic': 'exampleDataBioLogic.mpt',
                  'chinstruments': 'exampleDataCHInstruments.txt',
-                 'inspectrum': 'inspectrum_result_example_single.irf',
-                 'examight': 'inspectrum_result_example_single.irf',
+                 'inspectrum': 'exampleDataInspectrumSingleResult.irf',
                  None: 'exampleData.csv'}
 
 f_checks = {'gamry': f_gamry,
@@ -457,7 +456,6 @@ f_checks = {'gamry': f_gamry,
             'biologic': f_BioLogic,
             'chinstruments': f_CHInstruments,
             'inspectrum': f_Inspectrum,
-            'examight': f_Inspectrum,
             None: frequencies}
 
 Z_checks = {'gamry': Z_gamry,
@@ -469,7 +467,6 @@ Z_checks = {'gamry': Z_gamry,
             'biologic': Z_BioLogic,
             'chinstruments': Z_CHInst,
             'inspectrum': Z_Inspectrum,
-            'examight': Z_Inspectrum,
             None: Z_correct}
 
 directory = "data"
@@ -483,9 +480,11 @@ def test_readFile():
                 and (np.allclose(Z, Z_checks[inst]))
     # assert (f == frequencies).all() and (Z == Z_correct).all()
 
+
 def test_readInspectrum_single_spectrum():
     f, Z = readInspectrum(os.path.join(directory, example_files['inspectrum']))
     assert (f == f_Inspectrum).all() and (Z == Z_Inspectrum).all()
+
 
 def test_readGamry():
     f, Z = readGamry(os.path.join(directory, example_files['gamry']))
